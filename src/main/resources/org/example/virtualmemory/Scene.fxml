@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<VBox spacing="15" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.virtualmemory.PageReplacementController" style="-fx-background-color: white;">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <Label text="MÔ PHỎNG THAY THẾ TRANG (GRAPHIC VIEW)" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+    <HBox spacing="10" alignment="CENTER">
+        <TextField fx:id="txtPages" HBox.hgrow="ALWAYS" text="7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1" prefHeight="35"/>
+        <Button text="Import File" onAction="#handleImportFile" prefHeight="35"/>
+    </HBox>
+
+    <HBox spacing="20" alignment="CENTER">
+        <HBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Số Frames:"/>
+            <TextField fx:id="txtFrames" prefWidth="50" text="3" prefHeight="30"/>
+        </HBox>
+        <HBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="RefBits ban đầu:"/>
+            <TextField fx:id="txtRefBits" prefWidth="100" text="0,0,0" prefHeight="30"/>
+        </HBox>
+        <Button text="MÔ PHỎNG" onAction="#handleRunSimulation"
+                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" prefHeight="30" prefWidth="120"/>
+    </HBox>
+
+    <Label fx:id="lblSummary" style="-fx-font-weight: bold; -fx-text-fill: #e67e22;"/>
+
+    <ScrollPane VBox.vgrow="ALWAYS" fitToHeight="true" style="-fx-background-color: transparent;">
+        <HBox fx:id="boxVisualization" spacing="2" alignment="TOP_LEFT" style="-fx-background-color: white;">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+        </HBox>
+    </ScrollPane>
+</VBox>
