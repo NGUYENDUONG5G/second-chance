@@ -59,46 +59,45 @@ public class PageReplacementController {
 
     private void renderGraphics(int[] pages, SimulationResult result) {
         boxVisualization.getChildren().clear();
+        boxVisualization.setSpacing(10);
         int capacity = result.history[0].length;
 
         for (int j = 0; j < pages.length; j++) {
 
+            VBox columnBox = new VBox(8);
+            columnBox.setAlignment(Pos.TOP_CENTER);
+
+
             Label lblRef = new Label(String.valueOf(pages[j]));
-            lblRef.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 0 10 0 10;");
-            VBox refBox = new VBox(lblRef);
-            refBox.setAlignment(Pos.TOP_CENTER);
-            boxVisualization.getChildren().add(refBox);
+            lblRef.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+            columnBox.getChildren().add(lblRef);
 
 
             VBox framesBox = new VBox(0);
             framesBox.setAlignment(Pos.CENTER);
-
-            if (result.isFault[j]) {
-                for (int i = 0; i < capacity; i++) {
-                    String val = result.history[j][i];
-                    boolean bit = result.refBitsHistory[j][i];
-                    String displayVal = val.equals("-1") ? "" : val + " (" + (bit ? "1" : "0") + ")";
-                    Label lblFrame = new Label(displayVal);
-                    lblFrame.setStyle("-fx-background-color: #d1e9ff; " +
-                            "-fx-border-color: #555555; " +
-                            "-fx-border-width: 0.5; " +
-                            "-fx-min-width: 50; " +
-                            "-fx-min-height: 30; " +
-                            "-fx-alignment: center; " +
-                            "-fx-font-weight: bold;");
-                    framesBox.getChildren().add(lblFrame);
-                }
-            } else {
-
-                Region spacer = new Region();
-                spacer.setMinWidth(30);
-                framesBox.getChildren().add(spacer);
+            for (int i = 0; i < capacity; i++) {
+                String val = result.history[j][i];
+                boolean bit = result.refBitsHistory[j][i];
+                String displayVal = val.equals("-1") ? "" : val + " (" + (bit ? "1" : "0") + ")";
+                
+                Label lblFrame = new Label(displayVal);
+                lblFrame.setStyle("-fx-background-color: #d1e9ff; " +
+                        "-fx-border-color: #555555; " +
+                        "-fx-border-width: 0.5; " +
+                        "-fx-min-width: 65; " +
+                        "-fx-min-height: 30; " +
+                        "-fx-alignment: center; " +
+                        "-fx-font-weight: bold;");
+                framesBox.getChildren().add(lblFrame);
             }
+            columnBox.getChildren().add(framesBox);
 
-            VBox columnWrapper = new VBox(15);
-            columnWrapper.getChildren().add(new Region()); // Spacer ảo
-            columnWrapper.getChildren().add(framesBox);
-            boxVisualization.getChildren().add(columnWrapper);
+            // 3. Đánh dấu lỗi trang (Tick mark)
+            Label lblStatus = new Label(result.isFault[j] ? "✓" : "");
+            lblStatus.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-font-size: 20px;");
+            columnBox.getChildren().add(lblStatus);
+
+            boxVisualization.getChildren().add(columnBox);
         }
     }
 
@@ -139,7 +138,7 @@ public class PageReplacementController {
                 res.totalFaults++;
 
                 while (true) {
-                    if (!refBits[pointer]) {
+                    if (frames[pointer] == -1 || !refBits[pointer]) {
                         frames[pointer] = x;
                         pointer = (pointer + 1) % capacity;
                         break;
