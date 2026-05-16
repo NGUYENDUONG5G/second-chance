@@ -38,10 +38,10 @@ public class PageReplacementController {
                     .mapToInt(Integer::parseInt).toArray();
 
             String refBitsText = txtRefBits.getText().trim();
-            boolean[] initialRefBits = new boolean[capacity];
+            boolean[] initialRefBits = new boolean[pages.length];
             if (!refBitsText.isEmpty()) {
                 String[] bits = refBitsText.split("[,\\s]+");
-                for (int i = 0; i < Math.min(capacity, bits.length); i++) {
+                for (int i = 0; i < Math.min(pages.length, bits.length); i++) {
                     initialRefBits[i] = bits[i].equals("1");
                 }
             }
@@ -108,7 +108,7 @@ public class PageReplacementController {
         int totalFaults;
     }
 
-    private SimulationResult runLogic(int[] pages, int capacity, boolean[] refBits) {
+    private SimulationResult runLogic(int[] pages, int capacity, boolean[] pageRefBits) {
         SimulationResult res = new SimulationResult();
         int n = pages.length;
         res.history = new String[n][capacity];
@@ -119,15 +119,18 @@ public class PageReplacementController {
             Arrays.fill(res.history[i], "-1");
 
         int[] frames = new int[capacity];
+        boolean[] frameBits = new boolean[capacity];
         Arrays.fill(frames, -1);
         int pointer = 0;
 
         for (int j = 0; j < n; j++) {
             int x = pages[j];
+            boolean currentBitFromInput = (j < pageRefBits.length) ? pageRefBits[j] : false;
             boolean hit = false;
+
             for (int i = 0; i < capacity; i++) {
                 if (frames[i] == x) {
-                    refBits[i] = true;
+                    frameBits[i] = true;
                     hit = true;
                     break;
                 }
@@ -138,19 +141,20 @@ public class PageReplacementController {
                 res.totalFaults++;
 
                 while (true) {
-                    if (frames[pointer] == -1 || !refBits[pointer]) {
+                    if (frames[pointer] == -1 || !frameBits[pointer]) {
                         frames[pointer] = x;
+                        frameBits[pointer] = currentBitFromInput;
                         pointer = (pointer + 1) % capacity;
                         break;
                     }
-                    refBits[pointer] = false;
+                    frameBits[pointer] = false;
                     pointer = (pointer + 1) % capacity;
                 }
             }
 
             for (int i = 0; i < capacity; i++) {
                 res.history[j][i] = String.valueOf(frames[i]);
-                res.refBitsHistory[j][i] = refBits[i];
+                res.refBitsHistory[j][i] = frameBits[i];
             }
         }
 
